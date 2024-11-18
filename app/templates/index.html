@@ -1,24 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Password Validator</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
-    <script type="module" src="/static/js/validate.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Password Validator</title>
+  <link rel="stylesheet" href="/static/css/styles.css">
+  <script type="module" src="/static/js/validate.js" defer></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Password Validation</h1>
-        <ul id="rules">
-            <!-- Rules will be dynamically populated -->
-        </ul>
-        <form id="passwordForm">
-            <label for="password">Enter your password:</label>
-            <input type="password" id="password" name="password">
-            <button type="submit" disabled>Validate</button>
-        </form>
-        <div id="response"></div>
+<div class="container">
+  <h1>Password Validation</h1>
+  
+  <!-- Toggle for rules visibility -->
+  <div>
+    <label for="showRules">Show Password Rules:</label>
+    <input type="checkbox" id="showRules" name="showRules" checked>
+  </div>
+
+  <!-- Rules list -->
+  <ul id="rules">
+    <!-- Rules will be dynamically populated -->
+  </ul>
+
+  <!-- Password input with show password toggle -->
+  <form id="passwordForm">
+    <div>
+      <label for="passwordInput">Enter your password:</label>
+      <input type="password" id="passwordInput" name="password">
+      <label for="showPassword"></label>
+      <input type="checkbox" id="showPassword"> Show Password
     </div>
+
+    <!-- Submit button -->
+    <button type="submit" disabled>Validate</button>
+  </form>
+
+  <!-- Response message -->
+  <div id="response"></div>
+</div>
 </body>
 </html>

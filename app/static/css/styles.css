@@ -21,7 +21,7 @@ form {
     margin: 20px 0;
 }
 
-input[type="password"] {
+input {
     padding: 10px;
     border: 1px solid #444;
     border-radius: 4px;
@@ -37,6 +37,7 @@ button {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s;
+    margin-top: 20px;
 }
 
 button:hover {
@@ -53,4 +54,8 @@ button:disabled {
 #response {
     margin-top: 20px;
     font-size: 1.2em;
+}
+
+#showPassword {
+  margin-left: 10px;
 }
