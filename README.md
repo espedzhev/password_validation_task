@@ -42,7 +42,7 @@ This is a Python-based CLI (Command-Line Interface) tool for validating password
 ## Usage
 
 ```bash
-python main.py
+python cli.py
 ```
 
 ## Example Workflow

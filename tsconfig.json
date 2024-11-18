@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "strict": true,
+    "outDir": "./app/static/js",
+    "rootDir": "./app/static",
+    "esModuleInterop": true
+  },
+  "include": [
+    "app/static/**/*.ts"
+  ]
+}

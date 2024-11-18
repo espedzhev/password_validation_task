@@ -4,7 +4,8 @@ from typing import cast
 import click
 import pytest
 from click.testing import CliRunner
-from main import PasswordCriteria, is_valid_password, validate_password
+from app.cli import PasswordCriteria, validate_password
+from app.validation import is_valid_password
 
 
 class PasswordExamples(Enum):

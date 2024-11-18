@@ -2,6 +2,8 @@ from enum import Enum
 
 import click
 
+from app.validation import is_valid_password
+
 
 class PasswordCriteria(Enum):
     LENGTH = "Must be more than 8 characters long"
@@ -9,30 +11,6 @@ class PasswordCriteria(Enum):
     LOWERCASE = "Must contain at least one lowercase letter"
     DIGIT = "Must contain at least one digit"
     UNDERSCORE = "Must contain at least one underscore (_)"
-
-
-def is_valid_password(password: str) -> bool:
-    # Check if the password is longer than 8 characters
-    if len(password) <= 8:
-        return False
-
-    # Check if it contains at least one uppercase letter
-    if not any(char.isupper() for char in password):
-        return False
-
-    # Check if it contains at least one lowercase letter
-    if not any(char.islower() for char in password):
-        return False
-
-    # Check if it contains at least one digit
-    if not any(char.isdigit() for char in password):
-        return False
-
-    # Check if it contains at least one underscore
-    if "_" not in password:
-        return False
-
-    return True
 
 
 def print_help() -> None:
@@ -63,6 +41,7 @@ def validate_password() -> None:
 
     click.echo("\nValidating your password...")
 
+    # TODO move confirm_password in to argument
     if password == confirm_password and is_valid_password(password):
         # ✅ - 2705
         click.secho(
