@@ -6,14 +6,15 @@ const passwordInput = document.getElementById('passwordInput') as HTMLInputEleme
 const showPasswordCheckbox = document.getElementById('showPassword') as HTMLInputElement
 const submitButton = document.querySelector<HTMLButtonElement>('button[type="submit"]')!
 const form = document.getElementById('passwordForm') as HTMLFormElement
+const showRulesCheckbox = document.getElementById('showRules') as HTMLInputElement
 
 let debounceTimer: ReturnType<typeof setTimeout> | undefined
+let showRules = showRulesCheckbox.checked
 
 function togglePasswordVisibility(): void {
   passwordInput.type = showPasswordCheckbox.checked ? 'text' : 'password'
 }
 
-// Handle errors
 function handleError(message: string): void {
   console.error(message)
   responseDiv.textContent = message
@@ -21,8 +22,12 @@ function handleError(message: string): void {
   submitButton.disabled = true
 }
 
-// Update rules dynamically
 async function updateRules(password: string): Promise<void> {
+  if (!showRules) {
+    rulesList.innerHTML = ''
+    return
+  }
+
   try {
     rulesList.innerHTML = '<li>Loading...</li>'
     submitButton.disabled = true
@@ -49,7 +54,6 @@ async function updateRules(password: string): Promise<void> {
   }
 }
 
-// Handle form submission
 async function handleFormSubmit(event: Event): Promise<void> {
   event.preventDefault()
 
@@ -57,22 +61,27 @@ async function handleFormSubmit(event: Event): Promise<void> {
     const password = passwordInput.value.trim()
     const isValid = await validatePassword(password)
 
-    responseDiv.textContent = isValid
-      ? '✅ Your password is valid!'
-      : '❌ Your password is invalid!'
+    responseDiv.textContent = isValid ? '✅ Your password is valid!' : '❌ Your password is invalid!'
     responseDiv.style.color = isValid ? 'green' : 'red'
   } catch (error) {
     handleError('Error validating password.')
   }
 }
 
-// Debounce function
 function debounce<T extends (...args: any[]) => void>(func: T, delay: number): (...args: Parameters<T>) => void {
   return (...args: Parameters<T>) => {
     if (debounceTimer) clearTimeout(debounceTimer)
     debounceTimer = setTimeout(() => func(...args), delay)
   }
 }
+
+showRulesCheckbox.addEventListener('change', () => {
+  showRules = showRulesCheckbox.checked
+
+  if (!showRules) {
+    rulesList.innerHTML = ''
+  }
+})
 
 document.addEventListener('DOMContentLoaded', () => {
   showPasswordCheckbox.addEventListener('change', togglePasswordVisibility)
