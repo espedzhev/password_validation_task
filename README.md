@@ -39,10 +39,15 @@ This is a Python-based CLI (Command-Line Interface) tool for validating password
 3. Install the required dependencies
    pip install -r requirements.txt
 
-## Usage
+4. For API
+   npm install
+   npm run build:ts
+
+# Usage
+## Cli
 
 ```bash
-python cli.py
+python app/cli.py
 ```
 
 ## Example Workflow
@@ -74,8 +79,17 @@ platform linux -- Python 3.12.7, pytest-8.3.3, pluggy-1.5.0
 rootdir: /path/to/project
 collected 11 items
 
-test_cli.py ...........                                              [100%]
+app/tests/test_api.py ...                                              [ 21%]
+app/tests/test_cli.py ....                                             [ 50%]
+app/tests/test_validation.py .......                                   [100%]
 
-============================== 11 passed in 0.02s ===============================
+============================== 14 passed in 0.36s  ===============================
 
 ```
+
+## API
+```bash
+uvicorn app.main:app
+```
+- http://127.0.0.1:8000 for webinterface
+- http://127.0.0.1:8000/docs swagger ui

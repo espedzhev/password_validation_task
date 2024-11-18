@@ -5,7 +5,7 @@ import pytest
 from click.testing import CliRunner
 
 from app.cli import validate_password, PasswordCriteria
-from test_validation import PasswordExamples
+from .test_validation import PasswordExamples
 
 
 @pytest.fixture
