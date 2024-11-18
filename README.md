@@ -91,5 +91,5 @@ app/tests/test_validation.py .......                                   [100%]
 ```bash
 uvicorn app.main:app
 ```
-- http://127.0.0.1:8000 for webinterface
+- http://127.0.0.1:8000 webinterface
 - http://127.0.0.1:8000/docs swagger ui
