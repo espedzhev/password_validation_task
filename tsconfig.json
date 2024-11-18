@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "module": "commonjs",
+    "target": "es2017",
+    "module": "esnext",
     "strict": true,
     "outDir": "./app/static/js",
-    "rootDir": "./app/static",
+    "rootDir": "./app/static/ts",
     "esModuleInterop": true
   },
   "include": [

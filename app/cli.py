@@ -2,7 +2,7 @@ from enum import Enum
 
 import click
 
-from app.validation import is_valid_password
+from validation import is_valid_password
 
 
 class PasswordCriteria(Enum):
@@ -23,7 +23,8 @@ def print_help() -> None:
 
 
 @click.command()
-def validate_password() -> None:
+@click.option("--confirm", is_flag=True, help="Prompt for confirmation.")
+def validate_password(confirm: bool) -> None:
     """
     CLI tool to validate a password.
 
@@ -36,13 +37,24 @@ def validate_password() -> None:
     """
     print_help()
 
-    password = click.prompt("Enter your password", hide_input=True)
-    confirm_password = click.prompt("Confirm your password", hide_input=True)
+    password = click.prompt(
+        "Enter your password",
+        hide_input=True,
+    )
+
+    if confirm:
+        confirm_password = click.prompt("Confirm your password", hide_input=True)
+
+        if password != confirm_password:
+            click.secho(
+                "❌ Passwords do not match.",
+                fg="red",
+            )
+            return
 
     click.echo("\nValidating your password...")
 
-    # TODO move confirm_password in to argument
-    if password == confirm_password and is_valid_password(password):
+    if is_valid_password(password):
         # ✅ - 2705
         click.secho(
             "✅ Your password is valid!",

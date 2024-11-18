@@ -40,8 +40,15 @@ button {
 }
 
 button:hover {
-    background-color: #45a049;
+    background-color: #63ea66;
 }
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
 
 #response {
     margin-top: 20px;

@@ -74,7 +74,7 @@ platform linux -- Python 3.12.7, pytest-8.3.3, pluggy-1.5.0
 rootdir: /path/to/project
 collected 11 items
 
-test_main.py ...........                                              [100%]
+test_cli.py ...........                                              [100%]
 
 ============================== 11 passed in 0.02s ===============================
 

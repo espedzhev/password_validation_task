@@ -5,15 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Password Validator</title>
     <link rel="stylesheet" href="/static/css/styles.css">
-    <script src="/static/js/validate.js" defer></script>
+    <script type="module" src="/static/js/validate.js" defer></script>
 </head>
 <body>
     <div class="container">
         <h1>Password Validation</h1>
+        <ul id="rules">
+            <!-- Rules will be dynamically populated -->
+        </ul>
         <form id="passwordForm">
             <label for="password">Enter your password:</label>
             <input type="password" id="password" name="password">
-            <button type="submit">Validate</button>
+            <button type="submit" disabled>Validate</button>
         </form>
         <div id="response"></div>
     </div>

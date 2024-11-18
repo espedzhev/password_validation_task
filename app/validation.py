@@ -1,25 +1,42 @@
-def is_valid_password(password: str, rules: dict = None) -> bool:
+from typing import Callable
+
+
+def min_length(password: str, length: int = 8) -> bool:
+    return len(password) >= length
+
+
+def contains_uppercase(password: str) -> bool:
+    return any(char.isupper() for char in password)
+
+
+def contains_lowercase(password: str) -> bool:
+    return any(char.islower() for char in password)
+
+
+def contains_digit(password: str) -> bool:
+    return any(char.isdigit() for char in password)
+
+
+def contains_underscore(password: str) -> bool:
+    return "_" in password
+
+
+def is_valid_password(
+    password: str,
+    rules: list[Callable[[str], bool]] = None,
+    detailed: bool = False,
+) -> dict[str, bool] | bool:
     rules = rules or {
-        "min_length": 8,
-        "require_uppercase": True,
-        "require_lowercase": True,
-        "require_digit": True,
-        "require_underscore": True,
+        "min_length": min_length,
+        "require_uppercase": contains_uppercase,
+        "require_lowercase": contains_lowercase,
+        "require_digit": contains_digit,
+        "require_underscore": contains_underscore,
     }
 
-    if len(password) < rules["min_length"]:
-        return False
+    rule_statuses = {name: func(password) for name, func in rules.items()}
 
-    if rules["require_uppercase"] and not any(char.isupper() for char in password):
-        return False
+    if detailed:
+        return rule_statuses
 
-    if rules["require_lowercase"] and not any(char.islower() for char in password):
-        return False
-
-    if rules["require_digit"] and not any(char.isdigit() for char in password):
-        return False
-
-    if rules["require_underscore"] and "_" not in password:
-        return False
-
-    return True
+    return all(rule_statuses.values())
