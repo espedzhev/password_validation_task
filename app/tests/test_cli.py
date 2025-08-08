@@ -20,7 +20,7 @@ def test_cli_validate_password_valid_input(runner):
     )
 
     assert result.exit_code == 0
-    assert "✅ Your password is valid!" in result.output
+    assert "Your password is valid!" in result.output
 
 
 def test_cli_validate_password_invalid_input(runner):
@@ -30,7 +30,7 @@ def test_cli_validate_password_invalid_input(runner):
     )
 
     assert result.exit_code == 0
-    assert "❌ Your password is invalid" in result.output
+    assert "Your password is invalid" in result.output
 
 
 def test_cli_help_text_displayed(runner):
@@ -51,4 +51,4 @@ def test_cli_mismatched_passwords(runner):
     )
 
     assert result.exit_code == 0
-    assert "❌ Passwords do not match" in result.output
+    assert "Passwords do not match" in result.output
