@@ -21,7 +21,7 @@ This is a Python-based CLI (Command-Line Interface) tool for validating password
 ## Requirements
 
 - Python 3.8 or higher
-- `pip` for package management
+- `pip3` for package management
 
 ---
 
@@ -34,14 +34,14 @@ This is a Python-based CLI (Command-Line Interface) tool for validating password
    
 2. Create and activate a virtual environment:
    python3 -m venv .venv 
-   source .venv/bin/activate
+   `source .venv/bin/activate`
 
 3. Install the required dependencies
-   pip install -r requirements.txt
+   `pip3 install -r requirements.txt`
 
 4. For API
-   npm install
-   npm run build:ts
+   `npm install`
+   `npm run build:ts`
 
 # Usage
 ## Cli
@@ -89,7 +89,7 @@ app/tests/test_validation.py .......                                   [100%]
 
 ## API
 ```bash
-uvicorn app.main:app
+`uvicorn app.main:app`
 ```
 - http://127.0.0.1:8000 webinterface
 - http://127.0.0.1:8000/docs swagger ui
