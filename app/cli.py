@@ -47,7 +47,7 @@ def validate_password(confirm: bool) -> None:
 
         if password != confirm_password:
             click.secho(
-                "❌ Passwords do not match.",
+                "Passwords do not match.",
                 fg="red",
             )
             return
@@ -55,15 +55,13 @@ def validate_password(confirm: bool) -> None:
     click.echo("\nValidating your password...")
 
     if is_valid_password(password):
-        # ✅ - 2705
         click.secho(
-            "✅ Your password is valid!",
+            "Your password is valid!",
             fg="green",
         )
     else:
-        # ❌ - 274C
         click.secho(
-            "❌ Your password is invalid. Please ensure it meets all criteria.",
+            "Your password is invalid. Please ensure it meets all criteria.",
             fg="red",
         )
 
