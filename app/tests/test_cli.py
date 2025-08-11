@@ -20,6 +20,19 @@ def test_cli_validate_password_valid_input(runner):
     )
 
     assert result.exit_code == 0
+    assert "Validating your password..." in result.output
+    assert "Your password is valid!" in result.output
+
+
+def test_cli_confirm_match_valid_exits_zero(runner):
+    result = runner.invoke(
+        cast(click.Command, validate_password),
+        ["--confirm"],
+        input=f"{PasswordExamples.VALID.value}\n{PasswordExamples.VALID.value}\n",
+    )
+
+    assert result.exit_code == 0
+    assert "Validating your password..." in result.output
     assert "Your password is valid!" in result.output
 
 
@@ -29,7 +42,8 @@ def test_cli_validate_password_invalid_input(runner):
         input=f"{PasswordExamples.TOO_SHORT.value}\n",
     )
 
-    assert result.exit_code == 0
+    assert result.exit_code == 1
+    assert "Validating your password..." in result.output
     assert "Your password is invalid" in result.output
 
 
@@ -50,5 +64,5 @@ def test_cli_mismatched_passwords(runner):
         input=f"{PasswordExamples.VALID.value}\n{PasswordExamples.NO_NUMBER.value}\n",
     )
 
-    assert result.exit_code == 0
+    assert result.exit_code == 1
     assert "Passwords do not match" in result.output

@@ -1,4 +1,5 @@
 from enum import Enum
+import sys
 
 import click
 
@@ -50,7 +51,7 @@ def validate_password(confirm: bool) -> None:
                 "Passwords do not match.",
                 fg="red",
             )
-            return
+            sys.exit(1)
 
     click.echo("\nValidating your password...")
 
@@ -59,11 +60,13 @@ def validate_password(confirm: bool) -> None:
             "Your password is valid!",
             fg="green",
         )
+        sys.exit(0)
     else:
         click.secho(
             "Your password is invalid. Please ensure it meets all criteria.",
             fg="red",
         )
+        sys.exit(1)
 
 
 if __name__ == "__main__":

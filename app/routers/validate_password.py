@@ -13,7 +13,7 @@ DEFAULT_RULES = {
 }
 
 
-@router.get("api/v1/rules")
+@router.get("/rules")
 async def get_rules():
     return DEFAULT_RULES
 
@@ -24,19 +24,13 @@ class PasswordRequest(BaseModel):
 
 @router.post("/validate")
 async def validate_password(request: PasswordRequest):
-    """
-    Returns the overall validity of the password
-    """
-    password = request.password
-    valid = is_valid_password(password)
-    return {"password": password, "valid": valid}
+    valid = is_valid_password(request.password)
+
+    return {"valid": valid}
 
 
 @router.post("/validate/rules")
 async def validate_password_rules(request: PasswordRequest):
-    """
-    Returns the detailed rule validation for the password
-    """
-    password = request.password
-    rules_status = is_valid_password(password, detailed=True)
-    return {"password": password, "rules": rules_status}
+    rules_status = is_valid_password(request.password, detailed=True)
+
+    return {"rules": rules_status}

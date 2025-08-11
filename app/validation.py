@@ -2,7 +2,7 @@ from typing import Callable
 
 
 def min_length(password: str, length: int = 8) -> bool:
-    return len(password) >= length
+    return len(password) > length
 
 
 def contains_uppercase(password: str) -> bool:
@@ -23,7 +23,7 @@ def contains_underscore(password: str) -> bool:
 
 def is_valid_password(
     password: str,
-    rules: list[Callable[[str], bool]] = None,
+    rules: dict[str, Callable[[str], bool]] | None = None,
     detailed: bool = False,
 ) -> dict[str, bool] | bool:
     rules = rules or {
