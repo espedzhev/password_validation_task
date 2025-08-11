@@ -10,33 +10,33 @@
 <body>
 <div class="container">
   <h1>Password Validation</h1>
-  
+
   <!-- Toggle for rules visibility -->
   <div>
-    <label for="showRules">Show Password Rules:</label>
-    <input type="checkbox" id="showRules" name="showRules" checked>
+    <label for="show-rules">Show Password Rules:</label>
+    <input type="checkbox" id="show-rules" name="show-rules" checked>
   </div>
 
   <!-- Rules list -->
-  <ul id="rules">
+  <ul id="rules-list" class="rules-box">
     <!-- Rules will be dynamically populated -->
   </ul>
 
   <!-- Password input with show password toggle -->
-  <form id="passwordForm">
+  <form id="password-form">
     <div>
-      <label for="passwordInput">Enter your password:</label>
-      <input type="password" id="passwordInput" name="password">
-      <label for="showPassword"></label>
-      <input type="checkbox" id="showPassword"> Show Password
+      <label for="password-input">Password</label>
+      <input type="password" id="password-input" name="password">
+      <label for="show-password"></label>
+      <input type="checkbox" id="show-password"> Show
     </div>
 
     <!-- Submit button -->
-    <button type="submit" disabled>Validate</button>
+    <button id="submit-btn" type="submit">Validate</button>
   </form>
 
   <!-- Response message -->
-  <div id="response"></div>
+  <div id="response" role="status"></div>
 </div>
 </body>
 </html>

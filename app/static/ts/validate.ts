@@ -1,97 +1,155 @@
-import { fetchValidationRules, validatePassword } from './services/apiService.js'
+import { getRulesConfig, getDetailedRules, getOverallValidity, RulesConfig } from './services/apiService.js'
 
-const rulesList = document.getElementById('rules')!
-const responseDiv = document.getElementById('response')!
-const passwordInput = document.getElementById('passwordInput') as HTMLInputElement
-const showPasswordCheckbox = document.getElementById('showPassword') as HTMLInputElement
-const submitButton = document.querySelector<HTMLButtonElement>('button[type="submit"]')!
-const form = document.getElementById('passwordForm') as HTMLFormElement
-const showRulesCheckbox = document.getElementById('showRules') as HTMLInputElement
+const passwordInput = document.querySelector<HTMLInputElement>('#password-input')
+const showPassword = document.querySelector<HTMLInputElement>('#show-password')
+const showRulesToggle = document.querySelector<HTMLInputElement>('#show-rules')
+const rulesList = document.querySelector<HTMLUListElement>('#rules-list')
+const submitBtn = document.querySelector<HTMLButtonElement>('#submit-btn')
+const responseBox = document.querySelector<HTMLDivElement>('#response')
 
-let debounceTimer: ReturnType<typeof setTimeout> | undefined
-let showRules = showRulesCheckbox.checked
+let currentConfig: RulesConfig | null = null
 
-function togglePasswordVisibility(): void {
-  passwordInput.type = showPasswordCheckbox.checked ? 'text' : 'password'
+function setInputColor(valid: boolean | null) {
+  if (!passwordInput) return
+  passwordInput.style.color = valid === null ? '' : valid ? 'green' : 'red'
 }
 
-function handleError(message: string): void {
-  console.error(message)
-  responseDiv.textContent = message
-  responseDiv.style.color = 'red'
-  submitButton.disabled = true
+function renderRulesConfig(config: RulesConfig) {
+  if (!rulesList) return
+
+  const items = [
+    config.min_length !== null ? `Must be more than ${config.min_length} characters long` : null,
+    config.require_uppercase ? 'Must contain at least one uppercase letter' : null,
+    config.require_lowercase ? 'Must contain at least one lowercase letter' : null,
+    config.require_digit ? 'Must contain at least one digit' : null,
+    config.require_underscore ? 'Must contain at least one underscore (_)' : null,
+  ].filter(Boolean) as string[]
+
+  rulesList.innerHTML = items.length ? items.map((t) => `<li>${t}</li>`).join('') : '<li>No rules enabled.</li>'
 }
 
-async function updateRules(password: string): Promise<void> {
-  if (!showRules) {
+function buildLabelMap(config: RulesConfig | null): Record<string, string> {
+  if (!config) return {}
+  return {
+    ...(config.min_length !== null ? { min_length: `Must be more than ${config.min_length} characters long` } : {}),
+    ...(config.require_uppercase ? { require_uppercase: 'Must contain at least one uppercase letter' } : {}),
+    ...(config.require_lowercase ? { require_lowercase: 'Must contain at least one lowercase letter' } : {}),
+    ...(config.require_digit ? { require_digit: 'Must contain at least one digit' } : {}),
+    ...(config.require_underscore ? { require_underscore: 'Must contain at least one underscore (_)' } : {}),
+  }
+}
+
+async function updateDetailed(password: string) {
+  if (!rulesList || !submitBtn) return
+
+  if (!showRulesToggle?.checked) {
+    rulesList.classList.add('hidden')
     rulesList.innerHTML = ''
+    try {
+      const valid = password ? await getOverallValidity(password) : false
+      // submitBtn.disabled = !valid;
+      setInputColor(password ? valid : null)
+    } catch {
+      // submitBtn.disabled = true;
+      setInputColor(null)
+    }
     return
   }
 
+  rulesList.classList.remove('hidden')
+  rulesList.innerHTML = '<li>Checking...</li>'
+  // submitBtn.disabled = true;
+
   try {
-    rulesList.innerHTML = '<li>Loading...</li>'
-    submitButton.disabled = true
+    const rules = await getDetailedRules(password)
 
-    const rules = await fetchValidationRules(password)
+    const labelMap = buildLabelMap(currentConfig)
+    const order = [
+      'min_length',
+      'require_uppercase',
+      'require_lowercase',
+      'require_digit',
+      'require_underscore',
+    ] as const
 
+    const filtered = order
+      .map((key) =>
+        key in rules && key in labelMap ? { key, passed: rules[key] as boolean, label: labelMap[key] } : null,
+      )
+      .filter(Boolean) as Array<{ key: string; passed: boolean; label: string }>
+
+    const allPassed = filtered.length ? filtered.every((item) => item.passed) : false
+
+    rulesList.innerHTML = filtered
+      .map((item) => `<li style="color:${item.passed ? 'green' : 'red'}">${item.label}</li>`)
+      .join('')
+
+    // submitBtn.disabled = !allPassed;
+    setInputColor(password ? allPassed : null)
+  } catch {
+    rulesList.innerHTML = '<li style="color:red">Error fetching validation rules.</li>'
+    // submitBtn.disabled = true;
+    setInputColor(null)
+  }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  if (!passwordInput || !showPassword || !showRulesToggle || !rulesList || !submitBtn || !responseBox) return
+
+  try {
+    currentConfig = await getRulesConfig()
+    renderRulesConfig(currentConfig)
+  } catch {
+    rulesList.innerHTML = '<li style="color:red">Failed to load current rules.</li>'
+  }
+
+  if (!showRulesToggle.checked) {
+    rulesList.classList.add('hidden')
     rulesList.innerHTML = ''
-    let allRulesPassed = true
+  } else {
+    rulesList.classList.remove('hidden')
+  }
 
-    for (const [rule, passed] of Object.entries(rules)) {
-      const li = document.createElement('li')
-      li.textContent = `${rule.replace('_', ' ')}: ${passed ? '✅' : '❌'}`
-      li.style.color = passed ? 'green' : 'red'
-      rulesList.appendChild(li)
+  if (passwordInput.value) {
+    await updateDetailed(passwordInput.value)
+  }
 
-      if (!passed) {
-        allRulesPassed = false
+  passwordInput.addEventListener('input', async () => {
+    const pwd = passwordInput.value
+    await updateDetailed(pwd)
+  })
+
+  showPassword.addEventListener('change', () => {
+    passwordInput.type = showPassword.checked ? 'text' : 'password'
+  })
+
+  showRulesToggle.addEventListener('change', async () => {
+    if (showRulesToggle.checked) {
+      rulesList.classList.remove('hidden')
+      try {
+        currentConfig = await getRulesConfig()
+        renderRulesConfig(currentConfig)
+      } catch {
+        rulesList.innerHTML = '<li style="color:red">Failed to load current rules.</li>'
       }
+    } else {
+      rulesList.classList.add('hidden')
+      rulesList.innerHTML = ''
     }
+    await updateDetailed(passwordInput.value)
+  })
 
-    submitButton.disabled = !allRulesPassed
-  } catch (error) {
-    handleError('Error fetching validation rules.')
-  }
-}
+  document.querySelector<HTMLFormElement>('#password-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    responseBox.textContent = ''
 
-async function handleFormSubmit(event: Event): Promise<void> {
-  event.preventDefault()
-
-  try {
-    const password = passwordInput.value.trim()
-    const isValid = await validatePassword(password)
-
-    responseDiv.textContent = isValid ? '✅ Your password is valid!' : '❌ Your password is invalid!'
-    responseDiv.style.color = isValid ? 'green' : 'red'
-  } catch (error) {
-    handleError('Error validating password.')
-  }
-}
-
-function debounce<T extends (...args: any[]) => void>(func: T, delay: number): (...args: Parameters<T>) => void {
-  return (...args: Parameters<T>) => {
-    if (debounceTimer) clearTimeout(debounceTimer)
-    debounceTimer = setTimeout(() => func(...args), delay)
-  }
-}
-
-showRulesCheckbox.addEventListener('change', () => {
-  showRules = showRulesCheckbox.checked
-
-  if (!showRules) {
-    rulesList.innerHTML = ''
-  }
-})
-
-document.addEventListener('DOMContentLoaded', () => {
-  showPasswordCheckbox.addEventListener('change', togglePasswordVisibility)
-
-  const debouncedUpdateRules = debounce(async (event: Event) => {
-    const password = (event.target as HTMLInputElement).value
-    await updateRules(password)
-  }, 300)
-
-  passwordInput.addEventListener('input', debouncedUpdateRules)
-
-  form?.addEventListener('submit', handleFormSubmit)
+    try {
+      const valid = await getOverallValidity(passwordInput.value)
+      responseBox.textContent = valid ? 'Your password is valid.' : 'Your password is invalid.'
+      responseBox.style.color = valid ? 'green' : 'red'
+    } catch {
+      responseBox.textContent = 'Error validating password.'
+      responseBox.style.color = 'red'
+    }
+  })
 })
