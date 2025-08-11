@@ -21,22 +21,32 @@ def contains_underscore(password: str) -> bool:
     return "_" in password
 
 
+DEFAULT_RULES: tuple[tuple[str, Callable[[str], bool]], ...] = (
+    ("min_length", min_length),
+    ("require_uppercase", contains_uppercase),
+    ("require_lowercase", contains_lowercase),
+    ("require_digit", contains_digit),
+    ("require_underscore", contains_underscore),
+)
+
+
+def evaluate_password_rules(
+    password: str,
+    rules: tuple[tuple[str, Callable[[str], bool]], ...] = DEFAULT_RULES,
+) -> dict[str, bool]:
+    """
+    Returns a dict of rule_name: bool for each rule in rules
+    """
+    return {name: func(password) for name, func in rules}
+
+
 def is_valid_password(
     password: str,
-    rules: dict[str, Callable[[str], bool]] | None = None,
-    detailed: bool = False,
+    rules: tuple[tuple[str, Callable[[str], bool]], ...] = DEFAULT_RULES,
 ) -> dict[str, bool] | bool:
-    rules = rules or {
-        "min_length": min_length,
-        "require_uppercase": contains_uppercase,
-        "require_lowercase": contains_lowercase,
-        "require_digit": contains_digit,
-        "require_underscore": contains_underscore,
-    }
-
-    rule_statuses = {name: func(password) for name, func in rules.items()}
-
-    if detailed:
-        return rule_statuses
+    """
+    Returns True if a password passes all rules, else False
+    """
+    rule_statuses = evaluate_password_rules(password, rules)
 
     return all(rule_statuses.values())

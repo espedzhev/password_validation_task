@@ -1,4 +1,4 @@
-from app.validation import is_valid_password
+from app.validation import is_valid_password, evaluate_password_rules
 from fastapi import APIRouter
 from pydantic import BaseModel
 
@@ -25,12 +25,10 @@ class PasswordRequest(BaseModel):
 @router.post("/validate")
 async def validate_password(request: PasswordRequest):
     valid = is_valid_password(request.password)
-
     return {"valid": valid}
 
 
 @router.post("/validate/rules")
 async def validate_password_rules(request: PasswordRequest):
-    rules_status = is_valid_password(request.password, detailed=True)
-
+    rules_status = evaluate_password_rules(request.password)
     return {"rules": rules_status}

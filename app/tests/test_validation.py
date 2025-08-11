@@ -1,7 +1,7 @@
 from enum import Enum
 
 import pytest
-from app.validation import is_valid_password
+from app.validation import is_valid_password, evaluate_password_rules
 
 
 class PasswordExamples(Enum):
@@ -12,8 +12,8 @@ class PasswordExamples(Enum):
     NO_LOWERCASE = "NONUMBER1_"
     NO_UNDERSCORE = "NoUnderscore1"
     EMPTY = ""
-    EXACT_EIGHT = "Abcdef1_"
-    NINE_CHARS = "Abcdefg1_"
+    EXACT_EIGHT = "Abcdef1_"  # 8 chars
+    NINE_CHARS = "Abcdefg1_"  # 9 chars
 
 
 @pytest.mark.parametrize(
@@ -36,7 +36,7 @@ def test_is_valid_password(password_enum: PasswordExamples, expected: bool):
 
 def test_detailed_rules():
     pwd = "lowercase1"  # missing uppercase and underscore
-    rules = is_valid_password(pwd, detailed=True)
+    rules = evaluate_password_rules(pwd)
     assert isinstance(rules, dict)
     assert rules["min_length"] is True
     assert rules["require_lowercase"] is True
